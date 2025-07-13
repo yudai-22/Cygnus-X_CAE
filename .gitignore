@@ -1,0 +1,6 @@
+/data/zroing_resize_data
+/analysis/artifacts
+/save_dir
+*.fits
+*.npy
+*.pth
