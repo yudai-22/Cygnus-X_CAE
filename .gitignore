@@ -1,6 +1,7 @@
 /data/zroing_resize_data
 /analysis/artifacts
 /save_dir
+/Cygnus-X_cloud/wandb
 *.fits
 *.npy
 *.pth
