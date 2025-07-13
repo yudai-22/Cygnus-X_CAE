@@ -2,6 +2,7 @@
 /analysis/artifacts
 /save_dir
 /Cygnus-X_cloud/wandb
+**/__pycache__/
 *.fits
 *.npy
 *.pth
