@@ -44,7 +44,7 @@ def parse_args():
     #parser.add_argument("--wandb_name", type=str, default="demo1")
     parser.add_argument("--wandb_name", type=str)
     # モデルの選択
-    parser.add_argument("--model", type=str, default="model_layer9_BatchNorm_no_center", help="Name of the model file to import (without .py)")
+    parser.add_argument("--model_file", type=str, default="model_layer9_BatchNorm_no_center", help="Name of the model file to import (without .py)")
     return parser.parse_args()
 
 
