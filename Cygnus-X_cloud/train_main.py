@@ -1,9 +1,11 @@
 import argparse
+import importlib
 import itertools
 import os
 import shutil
 from itertools import product as product
 from math import sqrt as sqrt
+import sys
 
 import torch
 import torch.nn as nn
@@ -12,8 +14,10 @@ import wandb
 from PIL import ImageFile
 
 import train_model
-from model_04 import Conv3dAutoencoder
+# from model_04 import Conv3dAutoencoder
 from training_sub import weights_init
+
+sys.path.append("/home/filament/fujimoto/Cygnus-X_CAE/github_dir/FUGIN_cloud/models")
 
 
 def parse_args():
@@ -39,8 +43,17 @@ def parse_args():
     parser.add_argument("--wandb_project", type=str, default="demo")
     #parser.add_argument("--wandb_name", type=str, default="demo1")
     parser.add_argument("--wandb_name", type=str)
-
+    # モデルの選択
+    parser.add_argument("--model", type=str, default="model_layer9_BatchNorm_no_center", help="Name of the model file to import (without .py)")
     return parser.parse_args()
+
+
+def load_model(model_file):
+    try:
+        model_module = importlib.import_module(model_file)
+        return model_module.Conv3dAutoencoder
+    except ImportError as e:
+        raise ImportError(f"Failed to import module {model_file}. Make sure the file exists and is in the Python path.") from e
 
 
 # Training of SSD
@@ -80,6 +93,8 @@ def main(args):
         },
     )
 
+
+    Conv3dAutoencoder = load_model(args.model_file)
     model = Conv3dAutoencoder(latent=args.latent_num)
     model.apply(weights_init)
     model.to(device)
@@ -96,6 +111,9 @@ def main(args):
         "args": args,
         "device": device,
         "run": run,
+        "augment_horizontal"   : args.augment_horizontal, 
+        "augment_vertical"     : args.augment_vertical, 
+        "augment_velocity_axis": args.augment_velocity_axis
     }
 
     train_model.train_model(**train_model_params)
