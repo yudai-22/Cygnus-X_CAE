@@ -11,7 +11,31 @@ import wandb
 from training_sub import DataSet, EarlyStopping
 
 
-def train_model(model, criterion, optimizer, num_epochs, args, device, run, augment=True):
+def augment_data(train_data, augment_horizontal=False, augment_vertical=False, augment_velocity_axis=False):
+    horizontal_flip = transforms.RandomHorizontalFlip(p=1.0)
+    vertical_flip = transforms.RandomVerticalFlip(p=1.0)
+    
+    augmented_data = []
+    for img in train_data:
+        augmented_data.append(img)
+        #左右反転
+        if augment_horizontal:
+            augmented_data.append(horizontal_flip(img))
+        #上下反転
+        if augment_vertical:
+            augmented_data.append(vertical_flip(img))
+        #速度反転
+        if augment_velocity_axis:
+            augmented_data.append(torch.flip(img, dims=[0]))
+    
+    train_data = torch.stack(augmented_data)
+    return train_data
+
+
+def train_model(model, criterion, optimizer, num_epochs, args, device, run, 
+                augment_horizontal   =False, 
+                augment_vertical     =False, 
+                augment_velocity_axis=False):
     #weight_pass = args.savedir_path + "/model_parameters" + f"/model_parameter_{args.wandb_name}.pth"
     early_stopping = EarlyStopping(patience=15, verbose=True, path=args.savedir_path + "/model_parameter.pth")
 
@@ -26,18 +50,15 @@ def train_model(model, criterion, optimizer, num_epochs, args, device, run, augm
         val_data, val_labels, test_size=0.25, random_state=42, stratify=val_labels
     )
 
-    if augment:
-        horizontal_flip = transforms.RandomHorizontalFlip(p=1.0)
-        vertical_flip = transforms.RandomVerticalFlip(p=1.0)
+    train_data = augment_data(train_data, augment_horizontal, augment_vertical, augment_velocity_axis)
+    train_labels     = [0] * len(train_data)
 
-        augmented_data = []
-        for img in train_data:
-            augmented_data.append(img)
-            augmented_data.append(horizontal_flip(img))
-            augmented_data.append(vertical_flip(img))
+    train_dataset    = DataSet(train_data, train_labels)
+    train_dataloader = DataLoader(train_dataset, batch_size=args.train_mini_batch, shuffle=True)
+    val_dataset      = DataSet(val_data, val_labels)
+    val_dataloader   = DataLoader(val_dataset, batch_size=args.val_mini_batch, shuffle=False)
+    dataloader_dic   = {"train": train_dataloader, "val": val_dataloader}
 
-        train_data = torch.stack(augmented_data)
-        train_labels = [0] * len(train_data)
 
     train_dataset = DataSet(train_data, train_labels)
     train_dataloader = DataLoader(train_dataset, batch_size=args.train_mini_batch, shuffle=True)
