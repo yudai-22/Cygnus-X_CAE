@@ -86,7 +86,6 @@ def plot_selected_channel(data, start_ch=None, end_ch=None, tittle=None, grid=50
 
     plt.show()
 
-    
 
 def astro_image(hdu):#図の描画(aplpy)
     gc_distance = 1400
@@ -114,3 +113,8 @@ def astro_image(hdu):#図の描画(aplpy)
     fig.scalebar.set_font(size=15) 
     
     # plt.savefig("Cygnus-X_NRO45m.png")
+
+def calculate_resolution(wave_lambda, telescope_diameter):
+    resolution = np.rad2deg(wave_lambda / telescope_diameter) * 60
+    return resolution
+
