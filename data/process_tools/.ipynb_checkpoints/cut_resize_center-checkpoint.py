@@ -14,13 +14,13 @@ Thresh = 1
 Sigma = 2
 Sch_RMS = 10
 Ech_RMS = 90
-Sch_II = 0
-Ech_II = 320
+Sch_II = 121
+Ech_II = 241
 Percentile = 99.997
 Sigma_Multiply = 15
 
 Cut_size_list = [256, 128, 64]
-Integrate_layer_num = 320
+Integrate_layer_num = 30
 Obj_size = 100
 Maximum_mode = "normal"
 FITS_PATH = "/home/filament/fujimoto/fits/Cygnus_sp16_vs-40_ve040_dv0.25_12CO_Tmb.fits"
@@ -74,8 +74,7 @@ def process_fits_data(fits_path, output_file_name, cut_size_list, sch_ii, ech_ii
                                                 ech_ii=ech_ii,
                                                 sigma=sigma, 
                                                 thresh=thresh, 
-                                                # integrate_layer_num=integrate_layer_num
-                                                integrate_layer_num=len(cut_data[0])
+                                                integrate_layer_num=integrate_layer_num
                                                 )
             del cut_data
 

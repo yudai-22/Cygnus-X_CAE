@@ -1,6 +1,3 @@
-README = "You ca call function related astronomy."
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
@@ -9,6 +6,7 @@ import astropy.io.fits as fits
 from astropy.wcs import WCS
 from astropy.coordinates import SkyCoord
 import astropy.units as u
+from astropy.convolution import Gaussian2DKernel
 import aplpy
 
 
@@ -86,7 +84,6 @@ def plot_selected_channel(data, start_ch=None, end_ch=None, tittle=None, grid=50
 
     plt.show()
 
-    
 
 def astro_image(hdu):#図の描画(aplpy)
     gc_distance = 1400
@@ -114,3 +111,49 @@ def astro_image(hdu):#図の描画(aplpy)
     fig.scalebar.set_font(size=15) 
     
     # plt.savefig("Cygnus-X_NRO45m.png")
+
+
+def calculate_resolution(wave_lambda, telescope_diameter):
+    telescope_resolution = np.rad2deg(wave_lambda / telescope_diameter) * 60
+    return telescope_resolution
+
+
+def create_smoothing_kernel(original_resolution, pixel_grid, target_resolution):
+    """
+    画像を目標の分解能に平滑化するためのガウシアンカーネルを作成する。
+
+    Parameters
+    ----------
+    original_resolution : float
+        元の画像の分解能（FWHM）、単位は秒角。
+    pixel_grid : float
+        1ピクセルの大きさ、単位は秒角/ピクセル。
+    target_resolution : float
+        目標とする最終的な分解能（FWHM）、単位は秒角。
+
+    Returns
+    -------
+    astropy.convolution.Kernel2D
+        畳み込みに使用する2Dガウシアンカーネル。
+    """
+    if target_resolution < original_resolution:
+        raise ValueError("目標の分解能は元の分解能より大きい必要があります。")
+
+    # 必要なカーネルの分解能を計算（二乗和の平方根）
+    # R_final^2 = R_orig^2 + R_kernel^2
+    kernel_fwhm_arcsec = np.sqrt(target_resolution**2 - original_resolution**2)
+
+    # カーネルの分解能をピクセル単位に変換
+    kernel_fwhm_pixels = kernel_fwhm_arcsec / pixel_grid
+
+    # FWHMからガウス関数の標準偏差（sigma）に変換
+    # FWHM = 2.355 * sigma
+    sigma_pixels = kernel_fwhm_pixels / (2 * np.sqrt(2 * np.log(2)))
+
+    # 計算したsigma値を持つガウシアンカーネルを生成
+    kernel = Gaussian2DKernel(x_stddev=sigma_pixels, y_stddev=sigma_pixels)
+    
+    # カーネルを正規化（合計が1になるように）
+    kernel.normalize('integral')
+    
+    return kernel
