@@ -125,7 +125,7 @@ def conv(obj_size, obj_sig, data):
         sig3 = fwhm / (2 * (2 * np.log(2)) ** (1 / 2))
         sig2 = (sig3**2 - obj_sig**2) ** (1 / 2)
 
-        kernel = np.outer(signal.gaussian(8 * round(sig2) + 1, sig2), signal.gaussian(8 * round(sig2) + 1, sig2))
+        kernel = np.outer(signal.windows.gaussian(8 * round(sig2) + 1, sig2), signal.windows.gaussian(8 * round(sig2) + 1, sig2))
         kernel1 = kernel / np.sum(kernel)
 
         conv_list = []
