@@ -1,0 +1,3 @@
+https://www.nro.nao.ac.jp/~nro45mrt/html/data/cygnus-x/Cygnus_sp16_vs-40_ve040_dv0.25_12CO_Tmb.fits.gz
+https://www.nro.nao.ac.jp/~nro45mrt/html/data/cygnus-x/Cygnus_sp16_vs-40_ve040_dv0.25_13CO_Tmb.fits.gz
+https://www.nro.nao.ac.jp/~nro45mrt/html/data/cygnus-x/Cygnus_sp16_vs-40_ve040_dv0.25_C18O_Tmb.fits.gz
