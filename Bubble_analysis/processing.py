@@ -76,18 +76,19 @@ def remove_peak(array, dim, r_resolution, g_resolution):
         return data
 
 
-def resize(data, size):
+def resize(data, shape):
     """
     Resize data to the specified size.
 
-    Input  :（y, x, 2 or 3）
+    Input  :（y, x, 2 or 3）, shape is output size
+                ex. (16, 17)
     Output :（size ,size, 2 or 3）
     """
     cut_data = np.swapaxes(data, 1, 2)
     cut_data = np.swapaxes(cut_data, 0, 1)
     cut_data = torch.from_numpy(cut_data)
     cut_data = cut_data.unsqueeze(0)
-    resize_data = F.interpolate(cut_data, (size, size), mode="bilinear", align_corners=False)
+    resize_data = F.interpolate(cut_data, shape, mode="bilinear", align_corners=False)
     resize_data = np.squeeze(resize_data.detach().numpy())
 
     resize_data_ = np.swapaxes(resize_data, 0, 1)
