@@ -8,6 +8,5 @@
 **/save_dir
 **/latent_list
 **/wandb
-fits/
 artifacts/
 __pycache__
