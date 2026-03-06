@@ -68,6 +68,7 @@ for fits_num, (fits_path, integ_fits_path) in enumerate(zip(fits_path_all, integ
     region_name_parts = fits_name.split("_")
     region_name = region_name_parts[0] + "_" + region_name_parts[1]
     region_dir = f"./processed_data/{region_name}"
+    picture_dir = f"./data_pictures/{region_name}"
     print(f"📂 Output Directory: {region_dir}")
     
     # データの読み込み
@@ -231,16 +232,18 @@ for fits_num, (fits_path, integ_fits_path) in enumerate(zip(fits_path_all, integ
     # プロット数がデータ数より多い場合にエラーになるのを防ぐため最小値を取る
     plot_num = min(20, len(conv_resize_list))
     if plot_num > 0:
+        # 重複なしでランダムにインデックスを取得
         random_num = sorted(np.random.choice(len(conv_resize_list), plot_num, replace=False))
         print(f"📊 Plotting random samples: {random_num}")
         
         axes_num = conv_resize_list[0].shape[0]
+        Path(picture_dir).mkdir(parents=True, exist_ok=True) # 保存先ディレクトリの確保
         
+        # --- (A) チャンネルごとのマップ保存 ---
         for index in random_num:
             data = conv_resize_list[index]
             
             fig, axes = plt.subplots(1, axes_num, figsize=(axes_num*3, 1*4))
-            # axesが1次元にならない場合の対策（axes_numが1のとき）
             if axes_num == 1:
                 axes = [axes]
 
@@ -251,12 +254,32 @@ for fits_num, (fits_path, integ_fits_path) in enumerate(zip(fits_path_all, integ
         
             fig.suptitle(f"Data No.{index}, min={data.min():.2f}, max={data.max():.2f}", fontsize=30) 
             plt.tight_layout()
-            # 保存先の指定（region_dirの中に保存するよう修正）
-            Path(region_dir).mkdir(parents=True, exist_ok=True)
-            plt.savefig(f"{region_dir}/{region_name}_random_channelmap_No{index}.png")
-            plt.show()
+            plt.savefig(f"{picture_dir}/{region_name}_random_channelmap_No{index}.png")
+            plt.close(fig) # 保存したらすぐに閉じてメモリ解放
+            
+        # --- (B) 積分強度図の保存（追加機能） ---
+        print("🌌 Saving integrated intensity maps...")
+        fig_int, axes_int = plt.subplots(2, 10, figsize=(3*10, 6))
+        axes_int_flat = axes_int.flatten() # ループの前に1度だけ1次元化する
+        
+        for i, num in enumerate(random_num):
+            data = conv_resize_list[num]
+            # 積分処理
+            integ_data = np.nansum(data, axis=0)
+
+            axes_int_flat[i].imshow(integ_data, cmap="jet") # お好みでcmapを指定
+            axes_int_flat[i].axis("off")
+            axes_int_flat[i].set_title(f"cut_number {num}")
+
+        # データが20個未満で余ったサブプロットがあれば非表示にする
+        for j in range(plot_num, len(axes_int_flat)):
+            axes_int_flat[j].axis("off")
+
+        plt.tight_layout()
+        plt.savefig(f"{picture_dir}/{region_name}_integrated_random_data.png")
+        plt.close(fig_int) # こちらも保存後にメモリ解放
     
     # 最終データの保存
-    Path(region_dir).mkdir(parents=True, exist_ok=True)
     np.save(f"{region_dir}/non_bubble_data", conv_resize_list)
+    print(f"✅ Saved completely to {region_dir}/non_bubble_data.npy")
     print(f"✅ Saved completely to {region_dir}/non_bubble_data.npy")
