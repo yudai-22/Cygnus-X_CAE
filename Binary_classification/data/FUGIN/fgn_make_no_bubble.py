@@ -267,7 +267,7 @@ for fits_num, (fits_path, integ_fits_path) in enumerate(zip(fits_path_all, integ
             # 積分処理
             integ_data = np.nansum(data, axis=0)
 
-            axes_int_flat[i].imshow(integ_data, cmap="cividis", ) # お好みでcmapを指定
+            axes_int_flat[i].imshow(integ_data, cmap="viridis", ) # お好みでcmapを指定
             axes_int_flat[i].axis("off")
             axes_int_flat[i].set_title(f"cut_number {num}")
 
