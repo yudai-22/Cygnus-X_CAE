@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import os
 from pathlib import Path
 import glob
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 
 sys.path.append("process_tools/")
 from cut_resize_tools import *
@@ -154,8 +154,8 @@ for fits_num, (fits_path, integ_fits_path) in enumerate(zip(fits_path_all, integ
         else:
             deleted_indices.append(idx)
     
-    print(f"🗑️ 削除されたデータのインデックス: {deleted_indices}")
-    print(f"📉 削除された数: {len(deleted_indices)} | 残ったデータ数: {len(filtered_list)}")
+    # print(f"🗑️ 削除されたデータのインデックス: {deleted_indices}")
+    print(f"📉 削除された数: {len(deleted_indices)} | 残ったデータ数: {len(filtered_list)}/{len(catalogue_data)}")
     
     all_map = raw_d.copy()
     
