@@ -49,8 +49,8 @@ fits_path_all.sort()
 integ_fits_path_all.sort()
 
 # テスト用に最初の8つのみ取得
-fits_path_all = fits_path_all[:8]
-integ_fits_path_all = integ_fits_path_all[:8]
+fits_path_all = fits_path_all[5:8]
+integ_fits_path_all = integ_fits_path_all[5:8]
 total_fits = len(fits_path_all)
 
 # ==========================================
@@ -280,6 +280,6 @@ for fits_num, (fits_path, integ_fits_path) in enumerate(zip(fits_path_all, integ
         plt.close(fig_int) # こちらも保存後にメモリ解放
     
     # 最終データの保存
+    Path(region_dir).mkdir(parents=True, exist_ok=True)
     np.save(f"{region_dir}/non_bubble_data", conv_resize_list)
-    print(f"✅ Saved completely to {region_dir}/non_bubble_data.npy")
     print(f"✅ Saved completely to {region_dir}/non_bubble_data.npy")
