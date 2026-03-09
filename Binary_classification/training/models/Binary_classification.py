@@ -2,15 +2,15 @@ import torch.nn as nn
 
 class Binary_classification(nn.Module):
     def __init__(self, latent, 
-                 # input_depth, input_height, input_width
+                 input_depth, input_height, input_width
                 ):
         super(Binary_classification, self).__init__()
-        
+
         self.features = nn.Sequential(
             nn.Conv3d(1, 16, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm3d(16),
             nn.ReLU(True),
-            
+
             nn.Conv3d(16, 32, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm3d(32),
             nn.ReLU(True),
@@ -26,7 +26,7 @@ class Binary_classification(nn.Module):
         )
 
         FINAL_FLATTEN_SIZE = 16 * 1 * 10 * 10 # 仮の値
-        
+
         self.classifier = nn.Sequential(
             nn.Flatten(),
             nn.Linear(FINAL_FLATTEN_SIZE, latent),
@@ -48,7 +48,7 @@ class Binary_classification(nn.Module):
         latent_out = self.classifier[2](x)    # ReLU
         x = self.classifier[3](latent_out)    # Linear(latent, 1)
         out = self.classifier[4](x)           # Sigmoid
-        
+
         return out, latent_out
 
 
