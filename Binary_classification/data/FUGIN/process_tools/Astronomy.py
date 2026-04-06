@@ -157,3 +157,36 @@ def create_smoothing_kernel(original_resolution, pixel_grid, target_resolution):
     kernel.normalize('integral')
     
     return kernel
+
+def get_fits_boundaries(fits_path):
+    with fits.open(fits_path) as hdul:
+        header = hdul[0].header
+        w = WCS(header)
+        
+        # FITSの全ピクセル数を取得 (NAXIS1:横, NAXIS2:縦)
+        naxis1 = header['NAXIS1']
+        naxis2 = header['NAXIS2']
+        
+        # 1. 画像の4隅のピクセル座標を定義 (x, y)
+        # 0.5始まりにするのがAstropyの推奨（ピクセルの中心）
+        corners_pix = [
+            [0.5, 0.5, 0],                   # 左下
+            [naxis1 + 0.5, 0.5, 0],          # 右下
+            [0.5, naxis2 + 0.5, 0],          # 左上
+            [naxis1 + 0.5, naxis2 + 0.5, 0]  # 右上
+        ]
+        
+        # 2. ピクセル座標を天球座標(l, b)に変換
+        # FUGINのような3次元データの場合は、適宜ダミーの第3軸を追加
+        # w.all_pix2world(pixels, origin)
+        corners_world = w.all_pix2world(corners_pix, 1)
+        
+        # 銀経(l)と銀緯(b)のリストを取り出す
+        l_coords = corners_world[:, 0]
+        b_coords = corners_world[:, 1]
+        
+        # 3. 最小値と最大値を算出
+        l_min, l_max = min(l_coords), max(l_coords)
+        b_min, b_max = min(b_coords), max(b_coords)
+        
+        return (l_min, l_max), (b_min, b_max)

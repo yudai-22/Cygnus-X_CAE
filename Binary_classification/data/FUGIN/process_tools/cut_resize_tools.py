@@ -61,6 +61,25 @@ def maximum_value_determination(mode, data, vsmooth, sch_rms, ech_rms, sch_ii,
     print(f"{mode} value is", "{:.2f}".format(result))
     return result
     
+
+def process_data_segment_set_StartEnd(data, start_end, vsmooth, sch_rms, ech_rms, sigma, thresh, integrate_layer_num):
+    _data = data.copy()
+    vconv = convolve_vaxis(_data, vsmooth)
+    
+    _mask = vconv.copy()
+    rms = np.nanstd(vconv[sch_rms:ech_rms], axis=0)
+    _mask[np.where(_mask < rms*sigma)] = 0
+    ndata, _ = picking(_mask, data, thresh)
+    
+    # mean = np.mean(ndata, axis=(1, 2))
+    # max_intens_v = np.argmax(mean)
+    start_v = start_end[0]
+    end_v = start_end[1]    
+    ndata = ndata[start_v:end_v]
+    
+    ndata = integrate_to_x_layers(ndata, integrate_layer_num)
+    return ndata
+
     
 def process_data_segment_center_ver(data, vsmooth, sch_rms, ech_rms, sigma, thresh, width, integrate_layer_num):
     _data = data.copy()
@@ -168,6 +187,17 @@ def parallel_processing(function, target, *args, **kwargs):
         results = list(executor.map(partial_function, target))
     return results
 
+
+def parallel_processing_advanced(function, target_list, variable_list, *args, **kwargs):
+    # 1. 固定したい引数だけを partial で設定
+    partial_function = partial(function, *args, **kwargs)
+
+    # 2. 変動させたいリストを map に渡す
+    with ProcessPoolExecutor() as executor:
+        # partial_function(target_list[i], variable_list[i]) として実行されます
+        results = list(executor.map(partial_function, target_list, variable_list))
+    return results
+ 
 
 def select_conv(data, obj_size, obj_sig):
     if data.shape[2] > obj_size:
