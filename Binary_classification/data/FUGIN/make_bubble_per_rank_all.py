@@ -100,6 +100,11 @@ for fits_num in range(len(fits_paths)):
         f"{glon_min} <= GLON and GLON <= {glon_max} and {glat_min} <= GLAT and GLAT <= {glat_max}"
         ).reset_index()
 
+        # 範囲内のバブルがゼロだった場合ループをスキップ
+        if len(catalogue_data_selected) == 0:
+            print(f"{region_name} Rank:{rank} Bubble　is None. \n This process is skipped" )
+            continue
+
         GLON_center = catalogue_data_selected["GLON"]
         GLAT_center = catalogue_data_selected["GLAT"]
         Reff = catalogue_data_selected["Reff"] / 60
