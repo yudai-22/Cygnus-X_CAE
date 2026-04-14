@@ -19,10 +19,10 @@ from cut_resize_tools import *
 from Astronomy import *
 
 
-fits_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/Galaxy_Plane/FUGIN/12CO/FGN_01[6-9]00+0000_2x2_12CO_v1.00_cube.fits")
+fits_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/Galaxy_Plane/FUGIN/12CO/FGN_01600+0000_2x2_12CO_v1.00_cube.fits")
 fits_paths.sort()
 
-integ_fits_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/processed_fits/FUGIN/mom0/FGN_01[6-9]00+0000_2x2_12CO_v1.00_cube.pk_vsmooth_2.0_xysmooth_2.0_thresh_700.0_sigma_3.0_mom0.fits")
+integ_fits_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/processed_fits/FUGIN/mom0/FGN_01600+0000_2x2_12CO_v1.00_cube.pk_vsmooth_2.0_xysmooth_2.0_thresh_700.0_sigma_3.0_mom0.fits")
 integ_fits_paths.sort()
 
 rank_csv_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/Bubble_Catalogue/rank_catalogue/MWP_Rank*.csv")
@@ -387,6 +387,7 @@ for fits_num in range(len(fits_paths)):
                 # タイトルとプロットが重ならないように調整
                 plt.subplots_adjust(top=0.9) 
                 plt.savefig(f"{rank_dir_name}/{region_name}_Rank_{rank}_Bubble_No.{set_count}.png")
+                plt.close(fig)
         
                 # 次のセットに向けてリセット
                 current_batch_indices = []
@@ -412,6 +413,7 @@ for fits_num in range(len(fits_paths)):
             fig.suptitle(f"Data No.{index}, min={data.min():.2f}, max={data.max():.2f}", fontsize=30, fontweight='bold')
             plt.tight_layout()
             plt.savefig(f"{rank_dir_name}/{region_name}_Rank{rank}_channel_map_No{index}.png")
+            plt.close(fig)
 
         # ゼロで埋めたデータの削除
         deleted_indices = []
