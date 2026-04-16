@@ -18,7 +18,6 @@ import scipy.signal
 
 from npy_append_array import NpyAppendArray
 import psutil
-from tqdm.notebook import tqdm
 from Astronomy import *
 
 
