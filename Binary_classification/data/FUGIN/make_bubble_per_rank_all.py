@@ -18,16 +18,14 @@ sys.path.append("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/Binary_
 from cut_resize_tools import *
 from Astronomy import *
 
-
-fits_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/Galaxy_Plane/FUGIN/12CO/FGN_01600+0000_2x2_12CO_v1.00_cube.fits")
+fits_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/Galaxy_Plane/FUGIN/12CO/FGN_03400+0000_2x2_12CO_v1.00_cube.fits")
 fits_paths.sort()
 
-integ_fits_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/processed_fits/FUGIN/mom0/FGN_01600+0000_2x2_12CO_v1.00_cube.pk_vsmooth_2.0_xysmooth_2.0_thresh_700.0_sigma_3.0_mom0.fits")
+integ_fits_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/processed_fits/FUGIN/mom0/FGN_03400+0000_2x2_12CO_v1.00_cube.pk_vsmooth_2.0_xysmooth_2.0_thresh_700.0_sigma_3.0_mom0.fits")
 integ_fits_paths.sort()
 
 rank_csv_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/Bubble_Catalogue/rank_catalogue/MWP_Rank*.csv")
 rank_csv_paths.sort()
-
 
 # データ処理に関する定数の設定
 cutting_ratio = 2 # バブルの切り取り比率
@@ -378,11 +376,11 @@ for fits_num in range(len(fits_paths)):
                     ax.imshow(data, cmap="viridis") 
                     ax.set_title(f"{combinations[idx]}")
                     ax.axis("off")
-        
+
                 # --- Figure全体へのタイトル設定 ---
                 fig.suptitle(f"No.{set_count}, Data shape: {processed_list[idx].shape[1:]}", fontsize=16, fontweight='bold')
                 # --------------------------------
-                
+
                 plt.tight_layout()
                 # タイトルとプロットが重ならないように調整
                 plt.subplots_adjust(top=0.9) 
