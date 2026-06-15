@@ -1,6 +1,7 @@
 *.jpeg
 *.png
 *.fits
+*.npy
 *.ipynb_checkpoints
 **/data/zroing_resize_data
 **/processed_data
