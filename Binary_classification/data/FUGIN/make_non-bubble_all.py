@@ -131,8 +131,109 @@ for i in range(len(fits_path_all)):
     # --- フェーズ2: プロットの作成 ---
     # ※既存の描画コードをここに配置してください。
     # ★重要: プロット保存後は必ず plt.close() を呼び出してメモリを解放してください。
-    # plt.savefig(...)
-    # plt.close() 
+
+    # 強度密度の箱ひげ図を作成
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+    
+    # 1. データの準備
+    # single_list が対象の強度データ（1次元リストまたは配列）であると想定します
+    data_to_plot = density_list 
+    labels = ["All Data"] # グループ名を定義
+    
+    # --- 統計量の計算 ---
+    # NaNを除外して各値を算出します
+    q1 = np.nanpercentile(data_to_plot, 25)
+    q3 = np.nanpercentile(data_to_plot, 75)
+    median = np.nanmedian(data_to_plot)
+    mean = np.nanmean(data_to_plot)
+    
+    # --- 箱ひげ図の描画 ---
+    # (plt.figure() は環境に合わせて適宜追加してください)
+    
+    # tick_labels を使用して Matplotlib 3.9 以降の警告を回避
+    box = plt.boxplot(data_to_plot, tick_labels=labels, patch_artist=True, showmeans=True,
+                      meanprops={"marker":"s", "markerfacecolor":"magenta", "markeredgecolor":"k"},
+                      medianprops={"color": "black", "linewidth": 1}
+                      )
+    
+    # 箱の色を設定（要素が1つなので index 0 を指定）
+    box['boxes'][0].set_facecolor("gray")
+    box['boxes'][0].set_alpha(0.5)
+    
+    # 軸とラベルの設定
+    plt.yscale('linear') 
+    plt.ylabel(r'$\text{Total Intensity (Linear scale)}$')
+    plt.title(f'{region_name} Non-bubble Normalized Total Intensity per Bubble of All') 
+    plt.grid(True, axis='y', linestyle='--', alpha=0.5)
+    
+    # --- 凡例の作成（Q1, Q3 の値を追加） ---
+    # 数値は指数表記（.2e）にしています。必要に応じて .2f（小数表記）に変更してください。
+    legend_elements = [
+        Line2D([0], [0], color='black', lw=1.5, label=f'Median: {median:.3}'),
+        Line2D([0], [0], marker='s', color='w', markerfacecolor='magenta', markersize=8, label=f'Mean: {mean:.3}'),
+        Line2D([0], [0], color='gray', lw=1.5, label=f'Q1 (25%): {q1:.3}'),
+        Line2D([0], [0], color='gray', lw=1.5, label=f'Q3 (75%): {q3:.3}'),
+    ]
+    
+    # 凡例を配置（fontsize を調整して重なりを防いでいます）
+    plt.legend(handles=legend_elements, loc='upper right', fontsize='small')
+    
+    # 保存
+    plt.savefig(f"Total_Intensity_{region_name}_Boxplot_Stats.png")
+    plt.close()
+
+    # 正規化後のプロット
+    plt.figure(figsize=(10, 6))
+    positive_intensities = np.array(density_list)
+    
+    # データ数(N)を取得
+    N = len(positive_intensities)
+    
+    # 中央値と平均値の算出
+    median_val = np.nanmedian(positive_intensities)
+    mean_val = np.nanmean(positive_intensities)
+    
+    min_val = positive_intensities.min()
+    max_val = positive_intensities.max()
+    # log_bins = np.logspace(np.log10(min_val), np.log10(max_val), 50)
+    line_bins = np.linspace(min_val, max_val, 50)
+    
+    
+    # ヒストグラムの描画
+    plt.hist(positive_intensities, bins=line_bins, color="gray", alpha=0.7, edgecolor='w', 
+             label=f'Number of Bubbles = ${N}$')
+    
+    # 中央値の縦線を追加（赤色の破線）
+    plt.axvline(median_val, color='black', linestyle='--', linewidth=2, 
+                label=f'Median = ${median_val:.2e}$')
+    
+    # 平均値の縦線を追加（緑色の実線、または点線）
+    plt.axvline(mean_val, color='magenta', linestyle='-', linewidth=2, 
+                label=f'Mean = ${mean_val:.2e}$')
+    
+    # 第1四分位数の表示
+    plt.axvline(lower_threshold, color='blue', linestyle='-', linewidth=2, 
+                label=f'lower threshold = ${lower_threshold:.2e}$')
+    
+    # # 第3四分位数の表示
+    # plt.axvline(upper_threshold, color='red', linestyle='-', linewidth=2, 
+    #             label=f'upper threshold = ${upper_threshold:.2e}$')
+    
+    plt.xlim(0, 10)
+    # plt.ylim(0, 60)
+    # plt.xscale('log')
+    plt.xlabel(r'$\text{Total Intensity (Linear Scale)}$')
+    plt.ylabel(r'$\text{Frequency}$')
+    plt.title(f'{region_name} Distribution of Normalized Total Intensities for Bubbles')
+    plt.grid(True, linestyle='--', alpha=0.5)
+    
+    # 凡例を表示（追加した縦線のラベルも表示されます）
+    plt.legend()
+    
+    # 保存または表示
+    plt.savefig(f"{region_name}_Distribution_of_Normalized_Total_Intensities_with_Stats.png")
+    plt.close()
 
     # --- フェーズ3: チャンク単位での本処理と逐次保存 ---
     valid_metadata = [m for m in metadata_list if m['density'] >= lower_threshold]
