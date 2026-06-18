@@ -177,14 +177,14 @@ def normalization_sigma(data_list, sigma, multiply):
     return norm_list
 
 
-def parallel_processing(function, target, *args, **kwargs):
-    # functionに固定引数を設定
-    partial_function = partial(function, *args, **kwargs)
+# def parallel_processing(function, target, *args, **kwargs):
+#     # functionに固定引数を設定
+#     partial_function = partial(function, *args, **kwargs)
 
-    # 並列処理の実行
-    with ProcessPoolExecutor() as executor:
-        results = list(executor.map(partial_function, target))
-    return results
+#     # 並列処理の実行
+#     with ProcessPoolExecutor() as executor:
+#         results = list(executor.map(partial_function, target))
+#     return results
 
 
 def parallel_processing_advanced(function, target_list, variable_list, *args, **kwargs):
@@ -195,6 +195,14 @@ def parallel_processing_advanced(function, target_list, variable_list, *args, **
     with ProcessPoolExecutor() as executor:
         # partial_function(target_list[i], variable_list[i]) として実行されます
         results = list(executor.map(partial_function, target_list, variable_list))
+    return results
+
+
+def parallel_processing(function, target, *args, **kwargs):
+    partial_function = partial(function, *args, **kwargs)
+    # 例：最大プロセス数を物理コア数の半分などに制限する
+    with ProcessPoolExecutor(max_workers=8) as executor: 
+        results = list(executor.map(partial_function, target))
     return results
  
 
