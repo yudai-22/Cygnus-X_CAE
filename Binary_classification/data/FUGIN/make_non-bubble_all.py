@@ -15,6 +15,9 @@ sys.path.append("process_tools/")
 from cut_resize_tools import *
 from Astronomy import *
 
+# import os
+# os.environ['MPLCONFIGDIR'] = '/tmp/matplotlib'
+
 # === パラメータ設定 ===
 vsmooth = 5
 thresh = 1
@@ -38,9 +41,9 @@ CHUNK_SIZE = 500
 catalogue_path = '/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/Bubble_Catalogue/infer_catalogue_all.csv'
 catalogue_data = pd.read_csv(catalogue_path)
 
-fits_path_all = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/Galaxy_Plane/FUGIN/12CO/FGN_0[8-9]00+0000_2x2_12CO_v1.00_cube.fits")
+fits_path_all = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/Galaxy_Plane/FUGIN/12CO/FGN_0*00+0000_2x2_12CO_v1.00_cube.fits")
 fits_path_all.sort()
-integ_path_all = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/processed_fits/FUGIN/mom0/FGN_01[8-9]00+0000_2x2_12CO_v1.00_cube.pk_vsmooth_2.0_xysmooth_2.0_thresh_700.0_sigma_3.0_mom0.fits")
+integ_path_all = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/processed_fits/FUGIN/mom0/FGN_0*00+0000_2x2_12CO_v1.00_cube.pk_vsmooth_2.0_xysmooth_2.0_thresh_700.0_sigma_3.0_mom0.fits")
 integ_path_all.sort()
 
 for i in range(len(fits_path_all)):
