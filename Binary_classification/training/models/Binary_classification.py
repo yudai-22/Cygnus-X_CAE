@@ -91,6 +91,18 @@ class Binary_classification_2(nn.Module):
             nn.Sigmoid()
         )
 
+    
+    def forward(self, x):
+        x = self.features(x)
+        x = self.classifier[0](x) # Flatten
+        x = self.classifier[1](x) # Linear(..., latent) -> ここが欲しい値
+        
+        latent_out = self.classifier[2](x)    # ReLU
+        x = self.classifier[3](latent_out)    # Linear(latent, 1)
+        out = self.classifier[4](x)           # Sigmoid
+
+        return out, latent_out
+
 
 class Binary_classification_3(nn.Module):
     def __init__(self, latent, 

@@ -18,10 +18,10 @@ sys.path.append("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/Binary_
 from cut_resize_tools import *
 from Astronomy import *
 
-fits_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/Galaxy_Plane/FUGIN/12CO/FGN_03400+0000_2x2_12CO_v1.00_cube.fits")
+fits_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/Galaxy_Plane/FUGIN/12CO/FGN_0*00+0000_2x2_12CO_v1.00_cube.fits")
 fits_paths.sort()
 
-integ_fits_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/processed_fits/FUGIN/mom0/FGN_03400+0000_2x2_12CO_v1.00_cube.pk_vsmooth_2.0_xysmooth_2.0_thresh_700.0_sigma_3.0_mom0.fits")
+integ_fits_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/fits/processed_fits/FUGIN/mom0/FGN_0*00+0000_2x2_12CO_v1.00_cube.pk_vsmooth_2.0_xysmooth_2.0_thresh_700.0_sigma_3.0_mom0.fits")
 integ_fits_paths.sort()
 
 rank_csv_paths = glob.glob("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/Bubble_Catalogue/rank_catalogue/MWP_Rank*.csv")
@@ -34,13 +34,13 @@ thresh = 1 # pickingでオブジェクトとみなすpix数
 sigma = 1 # 
 sch_rms = 10
 ech_rms = 50
-sch_ii = 160
-ech_ii = 220
+sch_ii = 158
+ech_ii = 222
 percentile = 99.997
-width_half = 30
+width_half = 32
 sigma_multiply = None
-integrate_layer_num = 30
-obj_size = 100
+integrate_layer_num = 32
+obj_size = 128
 maximum_mode = "percentile"
 
 # fits毎にRank1~3のバブルデータを作成していく
@@ -351,7 +351,7 @@ for fits_num in range(len(fits_paths)):
         set_count = 0  # セット番号のカウンター
         
         # 2D画像保存ディレクトリ準備
-        rank_dir_name = f"{region_dir}/2D_map"
+        rank_dir_name = f"{region_dir}/2D_map_size128"
         Path(rank_dir_name).mkdir(parents=True, exist_ok=True)
         
         for i, comb in enumerate(combinations):
@@ -393,7 +393,7 @@ for fits_num in range(len(fits_paths)):
 
         # channel map の図示
         # Rank毎のchannelmap保存ディレクトリ準備
-        rank_dir_name = f"{region_dir}/channel_map"
+        rank_dir_name = f"{region_dir}/channel_map_size128"
         Path(rank_dir_name).mkdir(parents=True, exist_ok=True)
         
         axes_num = conv_resize_no_aug_list[0].shape[0]
@@ -430,5 +430,5 @@ for fits_num in range(len(fits_paths)):
         print("残ったデータ数: ",len(process_end_list))
         
         # データの保存
-        np.save(f"{region_dir}/slide_bubble_data", conv_resize_list)
-        np.save(f"{region_dir}/bubble_data", conv_resize_no_aug_list)
+        np.save(f"{region_dir}/slide_bubble_data_size128", conv_resize_list)
+        np.save(f"{region_dir}/bubble_data_size128", conv_resize_no_aug_list)
