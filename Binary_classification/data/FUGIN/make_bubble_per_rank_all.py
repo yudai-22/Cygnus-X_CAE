@@ -287,7 +287,7 @@ for fits_num in range(len(fits_paths)):
                                         integrate_layer_num=integrate_layer_num
                                         )
 
-        max_thresh = maximum_value_determination(
+        global_max = maximum_value_determination(
                                          mode=maximum_mode, 
                                          data=raw_d, 
                                          vsmooth=vsmooth, 
@@ -324,10 +324,10 @@ for fits_num in range(len(fits_paths)):
             _data = gaussian_filter(_data)
             _data = resize(_data, (obj_size, obj_size))
             if maximum_mode in ["percentile", "sigma"]:
-                _data = np.clip(_data, a_min=None, a_max=max_thresh)
+                _data = np.clip(_data, a_min=None, a_max=global_max)
             conv_resize_list.append(_data)
         
-        conv_resize_list = normalization_thresh(conv_resize_list, max_thresh)
+        conv_resize_list = normalization_thresh(conv_resize_list, global_min, global_max)
 
         conv_resize_no_aug_list = []
         for _data in tqdm(processed_no_aug_list):
@@ -335,10 +335,10 @@ for fits_num in range(len(fits_paths)):
             _data = gaussian_filter(_data)
             _data = resize(_data, (obj_size, obj_size))
             if maximum_mode in ["percentile", "sigma"]:
-                _data = np.clip(_data, a_min=None, a_max=max_thresh)
+                _data = np.clip(_data, a_min=None, a_max=global_max)
             conv_resize_no_aug_list.append(_data)
         
-        conv_resize_no_aug_list = normalization_thresh(conv_resize_no_aug_list, max_thresh)
+        conv_resize_no_aug_list = normalization_thresh(conv_resize_no_aug_list, global_min, global_max)
 
         #データの画像保存
         vals = [-0.25, 0, 0.25]
