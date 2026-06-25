@@ -96,7 +96,7 @@ for i in range(len(fits_path_all)):
     # --- フェーズ1: 座標とメタデータのみを収集 (実データは保持しない) ---
     metadata_list = []
     density_list = []
-    _, height, width = all_map.shape
+    velo_width, height, width = all_map.shape
     
     print("Collecting metadata...")
     for pix in cut_size_list:
@@ -110,13 +110,13 @@ for i in range(len(fits_path_all)):
                 if np.isnan(crop).any():
                     continue
                 
-                mean = np.nanmean(crop, axis=(1, 2))
-                max_v = np.argmax(mean)
+                mean_v = np.nanmean(crop, axis=(1, 2))
+                max_v = np.argmax(mean_v)
                 start_v = max_v - width_half
                 end_v = max_v + width_half
                 
                 # Z軸の範囲外アクセス防止
-                if start_v < 0 or end_v > all_map.shape[0]:
+                if start_v < 0 or end_v > velo_width:
                     continue
                 
                 density = np.nanmean(crop[start_v:end_v, :, :])
@@ -243,7 +243,7 @@ for i in range(len(fits_path_all)):
     del metadata_list, density_list
     gc.collect()
 
-    max_thresh = maximum_value_determination(
+    global_min, global_max = maximum_value_determination(
         mode=maximum_mode, data=raw_d, vsmooth=vsmooth, sch_rms=sch_rms, ech_rms=ech_rms,
         sch_ii=sch_ii, ech_ii=ech_ii, sigma=sigma, thresh=thresh,
         integrate_layer_num=integrate_layer_num, percentile=percentile
@@ -278,10 +278,10 @@ for i in range(len(fits_path_all)):
         for _data in processed_chunk:
             _data = gaussian_filter(_data)
             _data = resize(_data, (obj_size, obj_size))
-            _data = np.clip(_data, a_min=None, a_max=max_thresh)
+            _data = np.clip(_data, a_min=None, a_max=global_max)
             final_arrays.append(_data)
             
-        final_arrays = normalization_thresh(final_arrays, max_thresh)
+        final_arrays = normalization_thresh(final_arrays, global_min, global_max)
         
         # ディスクへ追記保存
         saved_file.append(np.array(final_arrays))
