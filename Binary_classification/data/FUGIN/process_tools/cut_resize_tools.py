@@ -98,6 +98,16 @@ def process_data_segment_center_ver(data, vsmooth, sch_rms, ech_rms, sigma, thre
     ndata = integrate_to_x_layers(ndata, integrate_layer_num)
     return ndata
 
+def process_data_segment_necessary(data, vsmooth, sch_rms, ech_rms, sigma, thresh, integrate_layer_num):
+    _data = data.copy()
+    vconv = convolve_vaxis(_data, vsmooth)
+    _mask = vconv.copy()
+    rms = np.nanstd(vconv[sch_rms:ech_rms], axis=0)
+    _mask[np.where(_mask < rms*sigma)] = 0
+    ndata, _ = picking(_mask, data, thresh)      
+    ndata = integrate_to_x_layers(ndata, integrate_layer_num)
+    return ndata
+
 
 def process_data_segment(data, vsmooth, sch_rms, ech_rms, sch_ii, ech_ii, sigma, thresh, integrate_layer_num):
     _data = data.copy()
@@ -152,11 +162,11 @@ def normalization(data_list):
     return norm_list
 
 
-def normalization_thresh(data_list, max_thresh):
+def normalization_thresh(data_list, global_min, global_max):
     norm_list = []
     for i in range(len(data_list)):
         data = data_list[i]
-        norm_data = (data - np.min(data)) / (max_thresh - np.min(data))
+        norm_data = (data - global_min) / (global_max - global_min)
         norm_list.append(norm_data)
     return norm_list
 
