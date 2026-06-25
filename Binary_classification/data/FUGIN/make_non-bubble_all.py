@@ -243,7 +243,7 @@ for i in range(len(fits_path_all)):
     del metadata_list, density_list
     gc.collect()
 
-    global_min, global_max = maximum_value_determination(
+    _, global_max = maximum_value_determination(
         mode=maximum_mode, data=raw_d, vsmooth=vsmooth, sch_rms=sch_rms, ech_rms=ech_rms,
         sch_ii=sch_ii, ech_ii=ech_ii, sigma=sigma, thresh=thresh,
         integrate_layer_num=integrate_layer_num, percentile=percentile
@@ -281,7 +281,7 @@ for i in range(len(fits_path_all)):
             _data = np.clip(_data, a_min=None, a_max=global_max)
             final_arrays.append(_data)
             
-        final_arrays = normalization_thresh(final_arrays, global_min, global_max)
+        final_arrays = normalization_thresh(final_arrays, global_max)
         
         # ディスクへ追記保存
         saved_file.append(np.array(final_arrays))

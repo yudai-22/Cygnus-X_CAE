@@ -287,7 +287,7 @@ for fits_num in range(len(fits_paths)):
                                         integrate_layer_num=integrate_layer_num
                                         )
 
-        global_max = maximum_value_determination(
+        _, global_max = maximum_value_determination(
                                          mode=maximum_mode, 
                                          data=raw_d, 
                                          vsmooth=vsmooth, 
@@ -327,7 +327,7 @@ for fits_num in range(len(fits_paths)):
                 _data = np.clip(_data, a_min=None, a_max=global_max)
             conv_resize_list.append(_data)
         
-        conv_resize_list = normalization_thresh(conv_resize_list, global_min, global_max)
+        conv_resize_list = normalization_thresh(conv_resize_list, global_max)
 
         conv_resize_no_aug_list = []
         for _data in tqdm(processed_no_aug_list):
@@ -338,7 +338,7 @@ for fits_num in range(len(fits_paths)):
                 _data = np.clip(_data, a_min=None, a_max=global_max)
             conv_resize_no_aug_list.append(_data)
         
-        conv_resize_no_aug_list = normalization_thresh(conv_resize_no_aug_list, global_min, global_max)
+        conv_resize_no_aug_list = normalization_thresh(conv_resize_no_aug_list, global_max)
 
         #データの画像保存
         vals = [-0.25, 0, 0.25]
