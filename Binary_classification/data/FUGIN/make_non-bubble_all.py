@@ -10,6 +10,14 @@ from tqdm import tqdm
 from npy_append_array import NpyAppendArray
 import gc
 
+import warnings
+# 'Degrees of freedom <= 0 for slice' というメッセージを含む RuntimeWarning のみ無視する
+warnings.filterwarnings(
+    'ignore', 
+    category=RuntimeWarning, 
+    message='Degrees of freedom <= 0 for slice'
+)
+
 import sys
 sys.path.append("process_tools/")
 from cut_resize_tools import *

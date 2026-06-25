@@ -16,6 +16,14 @@ from astropy.convolution import convolve, convolve_fft, Gaussian2DKernel, Tophat
 from astropy.modeling.models import Gaussian2D
 import scipy.signal
 
+import warnings
+# 'Degrees of freedom <= 0 for slice' というメッセージを含む RuntimeWarning のみ無視する
+warnings.filterwarnings(
+    'ignore', 
+    category=RuntimeWarning, 
+    message='Degrees of freedom <= 0 for slice'
+)
+
 from npy_append_array import NpyAppendArray
 import psutil
 from Astronomy import *

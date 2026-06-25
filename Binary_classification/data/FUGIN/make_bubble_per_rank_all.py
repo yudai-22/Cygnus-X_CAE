@@ -12,6 +12,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import itertools
 
+import warnings
+# 'Degrees of freedom <= 0 for slice' というメッセージを含む RuntimeWarning のみ無視する
+warnings.filterwarnings(
+    'ignore', 
+    category=RuntimeWarning, 
+    message='Degrees of freedom <= 0 for slice'
+)
+
 import torch
 
 sys.path.append("/home/cygnus/fujimoto/Cygnus-X_Molecular_Cloud_Analysis/Binary_classification/data/FUGIN/process_tools")
