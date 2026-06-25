@@ -59,7 +59,9 @@ def maximum_value_determination(mode, data, vsmooth, sch_rms, ech_rms, sch_ii,
     else:
         print("The value entered for mode is incorrect.")
         
-    print(f"{mode} value is", "{:.2f}".format(result))
+    print(f"global_min value is", "{:.2f}".format(global_min))
+    print(f"global_max value is", "{:.2f}".format(global_max))
+
     return global_min, global_max
     
 
