@@ -55,9 +55,9 @@ for i in range(len(fits_path_all)):
     
     print("="*25, f"START Region: {region_name}", "="*25)
     
-    with fits.open(integ_path_all[i]) as integ_hdu_list, fits.open(fits_path) as hdu_list:
-        wcs = WCS(integ_hdu_list[0].header)
-        raw_d = hdu_list[0].data
+    with fits.open(integ_path_all[i]) as integ_hdu, fits.open(fits_path) as hdu:
+        wcs = WCS(integ_hdu[0].header)
+        raw_d = hdu[0].data
         
     # --- バブル領域のWCS変換とマスク処理 ---
     # 辞書を使用せず、all_map に直接 NaN を書き込んで簡略化します
@@ -75,7 +75,7 @@ for i in range(len(fits_path_all)):
         valid_pix = [p for p in region_pix if len(p) == 2 and not np.isnan(p).any()]
         if not valid_pix:
             continue
-            
+        
         x_coords = [p[0] for p in valid_pix]
         y_coords = [p[1] for p in valid_pix]
         
