@@ -165,6 +165,9 @@ def normalization(data_list):
 
 
 def normalization_thresh(data_list, global_min, global_max):
+    """
+    global_minとglobal_maxにはmaximum_value_determinationで設定した値をそれぞれ入れる
+    """
     norm_list = []
     for i in range(len(data_list)):
         data = data_list[i]
