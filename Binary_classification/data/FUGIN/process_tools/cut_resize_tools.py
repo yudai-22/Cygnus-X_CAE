@@ -72,7 +72,9 @@ def process_data_segment_set_StartEnd(data, start_end, vsmooth, sch_rms, ech_rms
     _mask = vconv.copy()
     rms = np.nanstd(vconv[sch_rms:ech_rms], axis=0)
     _mask[np.where(_mask < rms*sigma)] = 0
-    ndata, _ = picking(_mask, data, thresh)
+    _org_data = data.copy()
+    _org_data[_org_data < 0] = 0 
+    ndata, _ = picking(_mask, _org_data, thresh)
     
     # mean = np.mean(ndata, axis=(1, 2))
     # max_intens_v = np.argmax(mean)
@@ -102,14 +104,34 @@ def process_data_segment_center_ver(data, vsmooth, sch_rms, ech_rms, sigma, thre
     ndata = integrate_to_x_layers(ndata, integrate_layer_num)
     return ndata
 
+# def process_data_segment_necessary(data, vsmooth, sch_rms, ech_rms, sigma, thresh, integrate_layer_num):
+#     _data = data.copy()
+#     vconv = convolve_vaxis(_data, vsmooth)
+#     _mask = vconv.copy()
+#     rms = np.nanstd(vconv[sch_rms:ech_rms], axis=0)
+#     _mask[np.where(_mask < rms*sigma)] = 0
+#     ndata, _ = picking(_mask, data, thresh)      
+#     ndata = integrate_to_x_layers(ndata, integrate_layer_num)
+#     return ndata
+
 def process_data_segment_necessary(data, vsmooth, sch_rms, ech_rms, sigma, thresh, integrate_layer_num):
     _data = data.copy()
+    
+    # 1. マスク生成用の処理（ノイズ統計を狂わせないためマイナス値を保持する）
     vconv = convolve_vaxis(_data, vsmooth)
     _mask = vconv.copy()
     rms = np.nanstd(vconv[sch_rms:ech_rms], axis=0)
     _mask[np.where(_mask < rms*sigma)] = 0
-    ndata, _ = picking(_mask, data, thresh)      
+    
+    # 2. 実データの準備とクリップ処理（0未満を0にする）
+    # ※picking関数が元の配列を上書きする仕様のため、必ずコピーに対して行う
+    _org_data = data.copy()
+    _org_data[_org_data < 0] = 0  
+    
+    # 3. マスク適用（picking）と積分
+    ndata, _ = picking(_mask, _org_data, thresh)      
     ndata = integrate_to_x_layers(ndata, integrate_layer_num)
+    
     return ndata
 
 
