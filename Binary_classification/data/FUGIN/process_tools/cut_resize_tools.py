@@ -166,14 +166,14 @@ def normalization(data_list):
     return norm_list
 
 
-def normalization_thresh(data_list, global_min, global_max):
+def normalization_thresh(data_list, global_max):
     """
     global_minとglobal_maxにはmaximum_value_determinationで設定した値をそれぞれ入れる
     """
     norm_list = []
     for i in range(len(data_list)):
         data = data_list[i]
-        norm_data = (data - global_min) / (global_max - global_min)
+        norm_data = data / global_max
         norm_list.append(norm_data)
     return norm_list
 
