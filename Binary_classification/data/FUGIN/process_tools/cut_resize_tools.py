@@ -49,16 +49,18 @@ def maximum_value_determination(mode, data, vsmooth, sch_rms, ech_rms, sch_ii,
     print('-------- integrating and xy_convolution --------')
     ndata = integrate_to_x_layers(ndata, integrate_layer_num)
     ndata = gaussian_filter(ndata)
+
+    global_min = ndata.min()
     
     if mode == "percentile":
-        result = np.nanpercentile(ndata, percentile)
+        global_max = np.nanpercentile(ndata, percentile)
     elif mode == "sigma":
-        result = np.nanstd(ndata)
+        global_max = np.nanstd(ndata)
     else:
         print("The value entered for mode is incorrect.")
         
     print(f"{mode} value is", "{:.2f}".format(result))
-    return result
+    return global_min, global_max
     
 
 def process_data_segment_set_StartEnd(data, start_end, vsmooth, sch_rms, ech_rms, sigma, thresh, integrate_layer_num):
