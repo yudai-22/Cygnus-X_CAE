@@ -30,8 +30,6 @@ def maximum_value_determination(mode, data, vsmooth, sch_rms, ech_rms, sch_ii,
     "sigma"
     のどちらかを入れる
     """
-
-    data = data.copy()
     print('======== maximum determination ========')
     print('-------- making v_convolution data --------')
     _data = data.copy()
@@ -43,7 +41,9 @@ def maximum_value_determination(mode, data, vsmooth, sch_rms, ech_rms, sch_ii,
     _mask = vconv.copy()
     rms = np.nanstd(vconv[sch_rms:ech_rms], axis=0)
     _mask[np.where(_mask < rms*sigma)] = 0
-    ndata, _ = picking(_mask, data, thresh)
+    _org_data = data.copy()
+    _org_data[_org_data < 0] = 0 
+    ndata, _ = picking(_mask, _org_data, thresh)
     ndata = ndata[sch_ii:ech_ii]
 
     print('-------- integrating and xy_convolution --------')
